@@ -1,0 +1,877 @@
+{
+    "meta": {
+        "name": "SplunkTAforPuppetEnterprise", 
+        "apiVersion": "3.0.0", 
+        "restRoot": "SplunkTAforPuppetEnterprise", 
+        "version": "1.0.7", 
+        "displayName": "Splunk Add-on for Puppet Enterprise"
+    }, 
+    "pages": {
+        "configuration": {
+            "title": "Configuration", 
+            "tabs": [
+                {
+                    "name": "logging", 
+                    "entity": [
+                        {
+                            "options": {
+                                "autoCompleteFields": [
+                                    {
+                                        "value": "DEBUG", 
+                                        "label": "DEBUG"
+                                    }, 
+                                    {
+                                        "value": "INFO", 
+                                        "label": "INFO"
+                                    }, 
+                                    {
+                                        "value": "WARNING", 
+                                        "label": "WARNING"
+                                    }, 
+                                    {
+                                        "value": "ERROR", 
+                                        "label": "ERROR"
+                                    }, 
+                                    {
+                                        "value": "CRITICAL", 
+                                        "label": "CRITICAL"
+                                    }
+                                ], 
+                                "disableSearch": true
+                            }, 
+                            "type": "singleSelect", 
+                            "label": "Log level", 
+                            "defaultValue": "INFO", 
+                            "field": "loglevel"
+                        }
+                    ], 
+                    "title": "Logging"
+                }, 
+                {
+                    "name": "additional_parameters", 
+                    "entity": [
+                        {
+                            "encrypted": true, 
+                            "validators": [
+                                {
+                                    "minLength": 0, 
+                                    "type": "string", 
+                                    "maxLength": 8192, 
+                                    "errorMsg": "Max length of password is 8192"
+                                }
+                            ], 
+                            "type": "text", 
+                            "help": "Generate your API Key using the following command: curl -k -X POST -H 'Content-Type: application/json' -d '{\"login\": \"<YOUR PE USER NAME>\", \"password\": \"<YOUR PE PASSWORD>\", \"lifetime\": \"9Y\"}'", 
+                            "defaultValue": "", 
+                            "required": true, 
+                            "field": "api_token", 
+                            "label": "api_token"
+                        }
+                    ], 
+                    "title": "Add-on Settings"
+                }
+            ], 
+            "description": "Set up your add-on"
+        }, 
+        "inputs": {
+            "services": [
+                {
+                    "name": "puppet_enterprise_status", 
+                    "entity": [
+                        {
+                            "field": "name", 
+                            "type": "text", 
+                            "help": "Enter a unique name for the data input", 
+                            "validators": [
+                                {
+                                    "pattern": "^[a-zA-Z]\\w*$", 
+                                    "type": "regex", 
+                                    "errorMsg": "Input Name must start with a letter and followed by alphabetic letters, digits or underscores."
+                                }, 
+                                {
+                                    "minLength": 1, 
+                                    "type": "string", 
+                                    "maxLength": 100, 
+                                    "errorMsg": "Length of input name should be between 1 and 100"
+                                }
+                            ], 
+                            "required": true, 
+                            "label": "Name"
+                        }, 
+                        {
+                            "field": "interval", 
+                            "type": "text", 
+                            "label": "Interval", 
+                            "validators": [
+                                {
+                                    "pattern": "^\\-[1-9]\\d*$|^\\d*$", 
+                                    "type": "regex", 
+                                    "errorMsg": "Interval must be an integer."
+                                }
+                            ], 
+                            "required": true, 
+                            "help": "Time interval of input in seconds."
+                        }, 
+                        {
+                            "validators": [
+                                {
+                                    "minLength": 1, 
+                                    "type": "string", 
+                                    "maxLength": 80, 
+                                    "errorMsg": "Length of index name should be between 1 and 80."
+                                }
+                            ], 
+                            "type": "singleSelect", 
+                            "label": "Index", 
+                            "defaultValue": "default", 
+                            "required": true, 
+                            "field": "index", 
+                            "options": {
+                                "blackList": "^_.*$", 
+                                "endpointUrl": "data/indexes", 
+                                "createSearchChoice": true
+                            }
+                        }, 
+                        {
+                            "field": "server", 
+                            "type": "text", 
+                            "help": "Input your Puppet Enterprise Server", 
+                            "validators": [
+                                {
+                                    "minLength": 0, 
+                                    "type": "string", 
+                                    "maxLength": 8192, 
+                                    "errorMsg": "Max length of text input is 8192"
+                                }
+                            ], 
+                            "options": {
+                                "placeholder": "https://puppetenterprise.domain.com"
+                            }, 
+                            "required": true, 
+                            "label": "Server"
+                        }, 
+                        {
+                            "validators": [
+                                {
+                                    "minLength": 0, 
+                                    "type": "string", 
+                                    "maxLength": 8192, 
+                                    "errorMsg": "Max length of text input is 8192"
+                                }
+                            ], 
+                            "type": "text", 
+                            "help": "Input your Puppet Enterprise DB Port (HTTPS 8081, HTTP: 8080)", 
+                            "defaultValue": "8081", 
+                            "required": true, 
+                            "options": {
+                                "placeholder": "8081"
+                            }, 
+                            "field": "port", 
+                            "label": "Port"
+                        }
+                    ], 
+                    "title": "Puppet Enterprise Status"
+                }, 
+                {
+                    "name": "puppet_enterprise_extended_details", 
+                    "entity": [
+                        {
+                            "field": "name", 
+                            "type": "text", 
+                            "help": "Enter a unique name for the data input", 
+                            "validators": [
+                                {
+                                    "pattern": "^[a-zA-Z]\\w*$", 
+                                    "type": "regex", 
+                                    "errorMsg": "Input Name must start with a letter and followed by alphabetic letters, digits or underscores."
+                                }, 
+                                {
+                                    "minLength": 1, 
+                                    "type": "string", 
+                                    "maxLength": 100, 
+                                    "errorMsg": "Length of input name should be between 1 and 100"
+                                }
+                            ], 
+                            "required": true, 
+                            "label": "Name"
+                        }, 
+                        {
+                            "field": "interval", 
+                            "type": "text", 
+                            "label": "Interval", 
+                            "validators": [
+                                {
+                                    "pattern": "^\\-[1-9]\\d*$|^\\d*$", 
+                                    "type": "regex", 
+                                    "errorMsg": "Interval must be an integer."
+                                }
+                            ], 
+                            "required": true, 
+                            "help": "Time interval of input in seconds."
+                        }, 
+                        {
+                            "validators": [
+                                {
+                                    "minLength": 1, 
+                                    "type": "string", 
+                                    "maxLength": 80, 
+                                    "errorMsg": "Length of index name should be between 1 and 80."
+                                }
+                            ], 
+                            "type": "singleSelect", 
+                            "label": "Index", 
+                            "defaultValue": "default", 
+                            "required": true, 
+                            "field": "index", 
+                            "options": {
+                                "blackList": "^_.*$", 
+                                "endpointUrl": "data/indexes", 
+                                "createSearchChoice": true
+                            }
+                        }, 
+                        {
+                            "field": "server", 
+                            "type": "text", 
+                            "help": "Input your Puppet Enterprise Server", 
+                            "validators": [
+                                {
+                                    "minLength": 0, 
+                                    "type": "string", 
+                                    "maxLength": 8192, 
+                                    "errorMsg": "Max length of text input is 8192"
+                                }
+                            ], 
+                            "required": true, 
+                            "label": "Server"
+                        }, 
+                        {
+                            "validators": [
+                                {
+                                    "minLength": 0, 
+                                    "type": "string", 
+                                    "maxLength": 8192, 
+                                    "errorMsg": "Max length of text input is 8192"
+                                }
+                            ], 
+                            "type": "text", 
+                            "help": "Input your Puppet Enterprise DB Port (HTTPS 8081, HTTP: 8080)", 
+                            "defaultValue": "8081", 
+                            "required": true, 
+                            "field": "port", 
+                            "label": "Port"
+                        }
+                    ], 
+                    "title": "Puppet Enterprise Extended Details"
+                }, 
+                {
+                    "name": "puppet_enterprise_aggregate_details_by_certname", 
+                    "entity": [
+                        {
+                            "field": "name", 
+                            "type": "text", 
+                            "help": "Enter a unique name for the data input", 
+                            "validators": [
+                                {
+                                    "pattern": "^[a-zA-Z]\\w*$", 
+                                    "type": "regex", 
+                                    "errorMsg": "Input Name must start with a letter and followed by alphabetic letters, digits or underscores."
+                                }, 
+                                {
+                                    "minLength": 1, 
+                                    "type": "string", 
+                                    "maxLength": 100, 
+                                    "errorMsg": "Length of input name should be between 1 and 100"
+                                }
+                            ], 
+                            "required": true, 
+                            "label": "Name"
+                        }, 
+                        {
+                            "field": "interval", 
+                            "type": "text", 
+                            "label": "Interval", 
+                            "validators": [
+                                {
+                                    "pattern": "^\\-[1-9]\\d*$|^\\d*$", 
+                                    "type": "regex", 
+                                    "errorMsg": "Interval must be an integer."
+                                }
+                            ], 
+                            "required": true, 
+                            "help": "Time interval of input in seconds."
+                        }, 
+                        {
+                            "validators": [
+                                {
+                                    "minLength": 1, 
+                                    "type": "string", 
+                                    "maxLength": 80, 
+                                    "errorMsg": "Length of index name should be between 1 and 80."
+                                }
+                            ], 
+                            "type": "singleSelect", 
+                            "label": "Index", 
+                            "defaultValue": "default", 
+                            "required": true, 
+                            "field": "index", 
+                            "options": {
+                                "blackList": "^_.*$", 
+                                "endpointUrl": "data/indexes", 
+                                "createSearchChoice": true
+                            }
+                        }, 
+                        {
+                            "field": "server", 
+                            "type": "text", 
+                            "help": "Input your Puppet Enterprise Server", 
+                            "validators": [
+                                {
+                                    "minLength": 0, 
+                                    "type": "string", 
+                                    "maxLength": 8192, 
+                                    "errorMsg": "Max length of text input is 8192"
+                                }
+                            ], 
+                            "required": true, 
+                            "label": "Server"
+                        }, 
+                        {
+                            "validators": [
+                                {
+                                    "minLength": 0, 
+                                    "type": "string", 
+                                    "maxLength": 8192, 
+                                    "errorMsg": "Max length of text input is 8192"
+                                }
+                            ], 
+                            "type": "text", 
+                            "help": "Input your Puppet Enterprise DB Port (HTTPS 8081, HTTP: 8080)", 
+                            "defaultValue": "8081", 
+                            "required": true, 
+                            "options": {
+                                "placeholder": "8081"
+                            }, 
+                            "field": "port", 
+                            "label": "Port"
+                        }, 
+                        {
+                            "validators": [
+                                {
+                                    "minLength": 0, 
+                                    "type": "string", 
+                                    "maxLength": 8192, 
+                                    "errorMsg": "Max length of text input is 8192"
+                                }
+                            ], 
+                            "type": "text", 
+                            "help": "Summarize by Type of Value (Certname, Classes or Resources)", 
+                            "defaultValue": "certname", 
+                            "required": true, 
+                            "options": {
+                                "placeholder": "certname"
+                            }, 
+                            "field": "summarize_by", 
+                            "label": "Summarize By"
+                        }
+                    ], 
+                    "title": "Puppet Enterprise Aggregate Details by Certname"
+                }, 
+                {
+                    "name": "puppet_enterprise_aggregate_by_resource", 
+                    "entity": [
+                        {
+                            "field": "name", 
+                            "type": "text", 
+                            "help": "Enter a unique name for the data input", 
+                            "validators": [
+                                {
+                                    "pattern": "^[a-zA-Z]\\w*$", 
+                                    "type": "regex", 
+                                    "errorMsg": "Input Name must start with a letter and followed by alphabetic letters, digits or underscores."
+                                }, 
+                                {
+                                    "minLength": 1, 
+                                    "type": "string", 
+                                    "maxLength": 100, 
+                                    "errorMsg": "Length of input name should be between 1 and 100"
+                                }
+                            ], 
+                            "required": true, 
+                            "label": "Name"
+                        }, 
+                        {
+                            "field": "interval", 
+                            "type": "text", 
+                            "label": "Interval", 
+                            "validators": [
+                                {
+                                    "pattern": "^\\-[1-9]\\d*$|^\\d*$", 
+                                    "type": "regex", 
+                                    "errorMsg": "Interval must be an integer."
+                                }
+                            ], 
+                            "required": true, 
+                            "help": "Time interval of input in seconds."
+                        }, 
+                        {
+                            "validators": [
+                                {
+                                    "minLength": 1, 
+                                    "type": "string", 
+                                    "maxLength": 80, 
+                                    "errorMsg": "Length of index name should be between 1 and 80."
+                                }
+                            ], 
+                            "type": "singleSelect", 
+                            "label": "Index", 
+                            "defaultValue": "default", 
+                            "required": true, 
+                            "field": "index", 
+                            "options": {
+                                "blackList": "^_.*$", 
+                                "endpointUrl": "data/indexes", 
+                                "createSearchChoice": true
+                            }
+                        }, 
+                        {
+                            "field": "server", 
+                            "type": "text", 
+                            "help": "Input your Puppet Enterprise Server", 
+                            "validators": [
+                                {
+                                    "minLength": 0, 
+                                    "type": "string", 
+                                    "maxLength": 8192, 
+                                    "errorMsg": "Max length of text input is 8192"
+                                }
+                            ], 
+                            "required": true, 
+                            "label": "Server"
+                        }, 
+                        {
+                            "validators": [
+                                {
+                                    "minLength": 0, 
+                                    "type": "string", 
+                                    "maxLength": 8192, 
+                                    "errorMsg": "Max length of text input is 8192"
+                                }
+                            ], 
+                            "type": "text", 
+                            "help": "Input your Puppet Enterprise DB Port (HTTPS 8081, HTTP: 8080)", 
+                            "defaultValue": "8081", 
+                            "required": true, 
+                            "options": {
+                                "placeholder": "8081"
+                            }, 
+                            "field": "port", 
+                            "label": "Port"
+                        }, 
+                        {
+                            "validators": [
+                                {
+                                    "minLength": 0, 
+                                    "type": "string", 
+                                    "maxLength": 8192, 
+                                    "errorMsg": "Max length of text input is 8192"
+                                }
+                            ], 
+                            "type": "text", 
+                            "help": "Puppet Enterprise Aggregate Details by Resource", 
+                            "defaultValue": "resource", 
+                            "required": true, 
+                            "options": {
+                                "placeholder": "resources"
+                            }, 
+                            "field": "summarize_by", 
+                            "label": "Summarize By"
+                        }
+                    ], 
+                    "title": "Puppet Enterprise Aggregate by Resource"
+                }, 
+                {
+                    "name": "puppet_enterprise_aggregate_details_by_classes", 
+                    "entity": [
+                        {
+                            "field": "name", 
+                            "type": "text", 
+                            "help": "Enter a unique name for the data input", 
+                            "validators": [
+                                {
+                                    "pattern": "^[a-zA-Z]\\w*$", 
+                                    "type": "regex", 
+                                    "errorMsg": "Input Name must start with a letter and followed by alphabetic letters, digits or underscores."
+                                }, 
+                                {
+                                    "minLength": 1, 
+                                    "type": "string", 
+                                    "maxLength": 100, 
+                                    "errorMsg": "Length of input name should be between 1 and 100"
+                                }
+                            ], 
+                            "required": true, 
+                            "label": "Name"
+                        }, 
+                        {
+                            "field": "interval", 
+                            "type": "text", 
+                            "label": "Interval", 
+                            "validators": [
+                                {
+                                    "pattern": "^\\-[1-9]\\d*$|^\\d*$", 
+                                    "type": "regex", 
+                                    "errorMsg": "Interval must be an integer."
+                                }
+                            ], 
+                            "required": true, 
+                            "help": "Time interval of input in seconds."
+                        }, 
+                        {
+                            "validators": [
+                                {
+                                    "minLength": 1, 
+                                    "type": "string", 
+                                    "maxLength": 80, 
+                                    "errorMsg": "Length of index name should be between 1 and 80."
+                                }
+                            ], 
+                            "type": "singleSelect", 
+                            "label": "Index", 
+                            "defaultValue": "default", 
+                            "required": true, 
+                            "field": "index", 
+                            "options": {
+                                "blackList": "^_.*$", 
+                                "endpointUrl": "data/indexes", 
+                                "createSearchChoice": true
+                            }
+                        }, 
+                        {
+                            "field": "server", 
+                            "type": "text", 
+                            "help": "Input your Puppet Enterprise Server", 
+                            "validators": [
+                                {
+                                    "minLength": 0, 
+                                    "type": "string", 
+                                    "maxLength": 8192, 
+                                    "errorMsg": "Max length of text input is 8192"
+                                }
+                            ], 
+                            "required": true, 
+                            "label": "Server"
+                        }, 
+                        {
+                            "validators": [
+                                {
+                                    "minLength": 0, 
+                                    "type": "string", 
+                                    "maxLength": 8192, 
+                                    "errorMsg": "Max length of text input is 8192"
+                                }
+                            ], 
+                            "type": "text", 
+                            "help": "Input your Puppet Enterprise DB Port (HTTPS 8081, HTTP: 8080)", 
+                            "defaultValue": "8081", 
+                            "required": true, 
+                            "options": {
+                                "placeholder": "8081"
+                            }, 
+                            "field": "port", 
+                            "label": "Port"
+                        }, 
+                        {
+                            "validators": [
+                                {
+                                    "minLength": 0, 
+                                    "type": "string", 
+                                    "maxLength": 8192, 
+                                    "errorMsg": "Max length of text input is 8192"
+                                }
+                            ], 
+                            "type": "text", 
+                            "help": "Summarize by Type of Value (Certname, Classes or Resources)", 
+                            "defaultValue": "containing_class", 
+                            "required": true, 
+                            "options": {
+                                "placeholder": "containing_class"
+                            }, 
+                            "field": "summarize_by", 
+                            "label": "Summarize By"
+                        }
+                    ], 
+                    "title": "Puppet Enterprise Aggregate Details by Classes"
+                }, 
+                {
+                    "name": "puppet_enterprise_node_status", 
+                    "entity": [
+                        {
+                            "field": "name", 
+                            "type": "text", 
+                            "help": "Enter a unique name for the data input", 
+                            "validators": [
+                                {
+                                    "pattern": "^[a-zA-Z]\\w*$", 
+                                    "type": "regex", 
+                                    "errorMsg": "Input Name must start with a letter and followed by alphabetic letters, digits or underscores."
+                                }, 
+                                {
+                                    "minLength": 1, 
+                                    "type": "string", 
+                                    "maxLength": 100, 
+                                    "errorMsg": "Length of input name should be between 1 and 100"
+                                }
+                            ], 
+                            "required": true, 
+                            "label": "Name"
+                        }, 
+                        {
+                            "field": "interval", 
+                            "type": "text", 
+                            "label": "Interval", 
+                            "validators": [
+                                {
+                                    "pattern": "^\\-[1-9]\\d*$|^\\d*$", 
+                                    "type": "regex", 
+                                    "errorMsg": "Interval must be an integer."
+                                }
+                            ], 
+                            "required": true, 
+                            "help": "Time interval of input in seconds."
+                        }, 
+                        {
+                            "validators": [
+                                {
+                                    "minLength": 1, 
+                                    "type": "string", 
+                                    "maxLength": 80, 
+                                    "errorMsg": "Length of index name should be between 1 and 80."
+                                }
+                            ], 
+                            "type": "singleSelect", 
+                            "label": "Index", 
+                            "defaultValue": "default", 
+                            "required": true, 
+                            "field": "index", 
+                            "options": {
+                                "blackList": "^_.*$", 
+                                "endpointUrl": "data/indexes", 
+                                "createSearchChoice": true
+                            }
+                        }, 
+                        {
+                            "field": "server", 
+                            "type": "text", 
+                            "help": "Input your Puppet Enterprise Server", 
+                            "validators": [
+                                {
+                                    "minLength": 0, 
+                                    "type": "string", 
+                                    "maxLength": 8192, 
+                                    "errorMsg": "Max length of text input is 8192"
+                                }
+                            ], 
+                            "required": true, 
+                            "label": "Server"
+                        }, 
+                        {
+                            "validators": [
+                                {
+                                    "minLength": 0, 
+                                    "type": "string", 
+                                    "maxLength": 8192, 
+                                    "errorMsg": "Max length of text input is 8192"
+                                }
+                            ], 
+                            "type": "text", 
+                            "help": "Input your Puppet Enterprise DB Port (HTTPS 8081, HTTP: 8080)", 
+                            "defaultValue": "8081", 
+                            "required": true, 
+                            "options": {
+                                "placeholder": "8081"
+                            }, 
+                            "field": "port", 
+                            "label": "Port"
+                        }
+                    ], 
+                    "title": "Puppet Enterprise Node Status"
+                }, 
+                {
+                    "name": "puppet_enterprise_factors", 
+                    "entity": [
+                        {
+                            "field": "name", 
+                            "type": "text", 
+                            "help": "Enter a unique name for the data input", 
+                            "validators": [
+                                {
+                                    "pattern": "^[a-zA-Z]\\w*$", 
+                                    "type": "regex", 
+                                    "errorMsg": "Input Name must start with a letter and followed by alphabetic letters, digits or underscores."
+                                }, 
+                                {
+                                    "minLength": 1, 
+                                    "type": "string", 
+                                    "maxLength": 100, 
+                                    "errorMsg": "Length of input name should be between 1 and 100"
+                                }
+                            ], 
+                            "required": true, 
+                            "label": "Name"
+                        }, 
+                        {
+                            "field": "interval", 
+                            "type": "text", 
+                            "label": "Interval", 
+                            "validators": [
+                                {
+                                    "pattern": "^\\-[1-9]\\d*$|^\\d*$", 
+                                    "type": "regex", 
+                                    "errorMsg": "Interval must be an integer."
+                                }
+                            ], 
+                            "required": true, 
+                            "help": "Time interval of input in seconds."
+                        }, 
+                        {
+                            "validators": [
+                                {
+                                    "minLength": 1, 
+                                    "type": "string", 
+                                    "maxLength": 80, 
+                                    "errorMsg": "Length of index name should be between 1 and 80."
+                                }
+                            ], 
+                            "type": "singleSelect", 
+                            "label": "Index", 
+                            "defaultValue": "default", 
+                            "required": true, 
+                            "field": "index", 
+                            "options": {
+                                "blackList": "^_.*$", 
+                                "endpointUrl": "data/indexes", 
+                                "createSearchChoice": true
+                            }
+                        }, 
+                        {
+                            "field": "server", 
+                            "type": "text", 
+                            "help": "Input your Puppet Enterprise Server", 
+                            "validators": [
+                                {
+                                    "minLength": 0, 
+                                    "type": "string", 
+                                    "maxLength": 8192, 
+                                    "errorMsg": "Max length of text input is 8192"
+                                }
+                            ], 
+                            "required": true, 
+                            "label": "Server"
+                        }, 
+                        {
+                            "validators": [
+                                {
+                                    "minLength": 0, 
+                                    "type": "string", 
+                                    "maxLength": 8192, 
+                                    "errorMsg": "Max length of text input is 8192"
+                                }
+                            ], 
+                            "type": "text", 
+                            "help": "Input your Puppet Enterprise DB Port (HTTPS 8081, HTTP: 8080)", 
+                            "defaultValue": "8081", 
+                            "required": true, 
+                            "options": {
+                                "placeholder": "8081"
+                            }, 
+                            "field": "port", 
+                            "label": "Port"
+                        }, 
+                        {
+                            "validators": [
+                                {
+                                    "minLength": 0, 
+                                    "type": "string", 
+                                    "maxLength": 8192, 
+                                    "errorMsg": "Max length of text input is 8192"
+                                }
+                            ], 
+                            "type": "text", 
+                            "help": "Puppet Enterprise Environment you want to monitor.", 
+                            "defaultValue": "production", 
+                            "required": true, 
+                            "options": {
+                                "placeholder": "production"
+                            }, 
+                            "field": "environment", 
+                            "label": "Environment"
+                        }
+                    ], 
+                    "title": "Puppet Enterprise Factors"
+                }
+            ], 
+            "title": "Inputs", 
+            "table": {
+                "header": [
+                    {
+                        "label": "Name", 
+                        "field": "name"
+                    }, 
+                    {
+                        "label": "Interval", 
+                        "field": "interval"
+                    }, 
+                    {
+                        "label": "Index", 
+                        "field": "index"
+                    }, 
+                    {
+                        "label": "Status", 
+                        "field": "disabled"
+                    }
+                ], 
+                "moreInfo": [
+                    {
+                        "label": "Name", 
+                        "field": "name"
+                    }, 
+                    {
+                        "label": "Interval", 
+                        "field": "interval"
+                    }, 
+                    {
+                        "label": "Index", 
+                        "field": "index"
+                    }, 
+                    {
+                        "label": "Status", 
+                        "field": "disabled"
+                    }, 
+                    {
+                        "label": "Server", 
+                        "field": "server"
+                    }, 
+                    {
+                        "label": "Port", 
+                        "field": "port"
+                    }, 
+                    {
+                        "label": "Summarize By", 
+                        "field": "summarize_by"
+                    }, 
+                    {
+                        "label": "Environment", 
+                        "field": "environment"
+                    }
+                ], 
+                "actions": [
+                    "edit", 
+                    "enable", 
+                    "delete", 
+                    "clone"
+                ]
+            }, 
+            "description": "Manage your data inputs"
+        }
+    }
+}
