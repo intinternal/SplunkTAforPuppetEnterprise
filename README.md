@@ -14,11 +14,17 @@ The Puppet TA for Puppet Enterprise requires that you have the following install
 
 Version 1.0.7:
 Puppet Enterprise Add-on Rewrite
+
     - Includes Support for Self Signed (8081) + HTTP (8080) for PuppetDB Calls
+    
     - Rewrite of all Extraction Fields + Cleanup of Resources, Classes, and CertName
+    
     - Fixed API Key Storage
+    
     - Fixed Title to Match Pulls
+    
     - Fixed Help Text to Match Fields
+    
     - Fixed Issue with Memoryleak on Timeout API Calls
 
 
