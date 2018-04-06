@@ -27,7 +27,7 @@ Puppet Enterprise Add-on Rewrite
     
     - Fixed Issue with Memoryleak on Timeout API Calls
 
-
+PPT Instructions: https://splunk.box.com/s/8buxwblhopu553cq03gamsys486mwyy0
 
 Installation
 ------------
