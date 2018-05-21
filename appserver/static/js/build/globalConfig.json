@@ -49,7 +49,7 @@
                 }, 
                 {
                     "name": "additional_parameters", 
-                    entity": [
+                    "entity": [
                         {
                             "encrypted": true, 
                             "validators": [
@@ -990,6 +990,10 @@
                     {
                         "label": "Environment", 
                         "field": "environment"
+                    },
+                    {
+                        "label": "Service ID", 
+                        "field": "service_id"
                     }
                 ], 
                 "actions": [
