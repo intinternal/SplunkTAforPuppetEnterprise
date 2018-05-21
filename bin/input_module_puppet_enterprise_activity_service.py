@@ -86,6 +86,7 @@ def collect_events(helper, ew):
         
         for one_dict in r['commits']:
             data = json.dumps(one_dict,sort_keys=False)
+            data['_service_id'] = service_id
         
             event = helper.new_event(source=input_type, index=helper.get_output_index(stanza_name), sourcetype=helper .get_sourcetype(stanza_name), data=data)
             helper.log_error (response.text) 
