@@ -49,7 +49,7 @@
                 }, 
                 {
                     "name": "additional_parameters", 
-                    "entity": [
+                    entity": [
                         {
                             "encrypted": true, 
                             "validators": [
@@ -808,6 +808,134 @@
                         }
                     ], 
                     "title": "Puppet Enterprise Factors"
+                },
+                {
+                    "name": "puppet_enterprise_activity_service", 
+                    "entity": [
+                        {
+                            "field": "name", 
+                            "type": "text", 
+                            "help": "Enter a unique name for the data input", 
+                            "validators": [
+                                {
+                                    "pattern": "^[a-zA-Z]\\w*$", 
+                                    "type": "regex", 
+                                    "errorMsg": "Input Name must start with a letter and followed by alphabetic letters, digits or underscores."
+                                }, 
+                                {
+                                    "minLength": 1, 
+                                    "type": "string", 
+                                    "maxLength": 100, 
+                                    "errorMsg": "Length of input name should be between 1 and 100"
+                                }
+                            ], 
+                            "required": true, 
+                            "label": "Name"
+                        }, 
+                        {
+                            "field": "interval", 
+                            "type": "text", 
+                            "label": "Interval", 
+                            "validators": [
+                                {
+                                    "pattern": "^\\-[1-9]\\d*$|^\\d*$", 
+                                    "type": "regex", 
+                                    "errorMsg": "Interval must be an integer."
+                                }
+                            ], 
+                            "required": true, 
+                            "help": "Time interval of input in seconds."
+                        }, 
+                        {
+                            "validators": [
+                                {
+                                    "minLength": 1, 
+                                    "type": "string", 
+                                    "maxLength": 80, 
+                                    "errorMsg": "Length of index name should be between 1 and 80."
+                                }
+                            ], 
+                            "type": "singleSelect", 
+                            "label": "Index", 
+                            "defaultValue": "default", 
+                            "required": true, 
+                            "field": "index", 
+                            "options": {
+                                "blackList": "^_.*$", 
+                                "endpointUrl": "data/indexes", 
+                                "createSearchChoice": true
+                            }
+                        }, 
+                        {
+                            "field": "server", 
+                            "type": "text", 
+                            "help": "Input your Puppet Enterprise Server", 
+                            "validators": [
+                                {
+                                    "minLength": 0, 
+                                    "type": "string", 
+                                    "maxLength": 8192, 
+                                    "errorMsg": "Max length of text input is 8192"
+                                }
+                            ], 
+                            "required": true, 
+                            "label": "Server"
+                        }, 
+                        {
+                            "validators": [
+                                {
+                                    "minLength": 0, 
+                                    "type": "string", 
+                                    "maxLength": 8192, 
+                                    "errorMsg": "Max length of text input is 8192"
+                                }
+                            ], 
+                            "type": "text", 
+                            "help": "Input your Puppet Enterprise Port (HTTPS 4433)", 
+                            "defaultValue": "4433", 
+                            "required": true, 
+                            "options": {
+                                "placeholder": "4433"
+                            }, 
+                            "field": "port", 
+                            "label": "Port"
+                        }, 
+                        {
+                            "validators": [
+                                {
+                                    "minLength": 0, 
+                                    "type": "string", 
+                                    "maxLength": 8192, 
+                                    "errorMsg": "Max length of text input is 8192"
+                                }
+                            ], 
+                            "type": "text", 
+                            "help": "Puppet Enterprise Environment you want to monitor.", 
+                            "defaultValue": "production", 
+                            "required": true, 
+                            "options": {
+                                "placeholder": "production"
+                            }, 
+                            "field": "environment", 
+                            "label": "Environment"
+                        },
+                        {
+                            "field": "service_id",
+                            "help": "Service ID to query, ex. classifier or rbac",
+                            "label": "Service ID",
+                            "required": true,
+                            "type": "text",
+                            "validators": [
+                                {
+                                    "errorMsg": "Max length of text input is 8192",
+                                    "maxLength": 8192,
+                                    "minLength": 0,
+                                    "type": "string"
+                                }
+                            ]
+                        }
+                    ], 
+                    "title": "Puppet Enterprise Activity Service"
                 }
             ], 
             "title": "Inputs", 

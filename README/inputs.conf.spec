@@ -29,3 +29,8 @@ port = Input your Puppet Enterprise DB Port (HTTPS 8081, HTTP: 8080)
 server = Input your Puppet Enterprise Server
 port = Input your Puppet Enterprise DB Port (HTTPS 8081, HTTP: 8080)
 environment = Puppet Enterprise Environment you want to monitor.
+
+[puppet_enterprise_activity_service://<name>]
+server = Input your Puppet Enterprise Server
+port = Input your Puppet Enterprise Port (HTTPS 4433)
+service_id = Service ID to query, ex. classifier or rbac
