@@ -74,10 +74,10 @@ def write_events(helper, ew, events_data):
 
 def collect_events(helper, ew):
     #get checkpoint value
-    service_id = helper.get_arg('service_id')
-    offset_ckpt_str = service_id + "_offset"
-    stop_offset_ckpt_str = service_id + "_stop_offset"
-    total_ckpt_str = service_id + "_total"
+    input_name = helper.get_arg('name')
+    offset_ckpt_str = input_name + "_offset"
+    stop_offset_ckpt_str = input_name + "_stop_offset"
+    total_ckpt_str = input_name + "_total"
 
     offset_ckpt = helper.get_check_point(offset_ckpt_str)  # Will be 0 if we were caught up on previous run
     stop_offset_ckpt = helper.get_check_point(stop_offset_ckpt_str)  # Only valid if offset_ckpt != 0 or None. Get UP TO this value.
@@ -89,7 +89,8 @@ def collect_events(helper, ew):
     total_rows = data['total-rows']
     limit = data['limit']
     new_rows = total_rows - previous_total
-    helper.log_info('Got {} new rows. Previous total {}, current total {}'.format(new_rows, previous_total, total_rows))
+    helper.log_info('{} new rows. Previous total {}, current total {}'.format(new_rows, previous_total, total_rows))
+    helper.log_info('Offset used: {}. Limit returned {}. Stop offset {}'.format(offset_ckpt, limit, stop_offset_ckpt))
     helper.save_check_point(total_ckpt_str, total_rows)
 
     if offset_ckpt is None or offset_ckpt == 0:  # We are getting new data
@@ -97,6 +98,7 @@ def collect_events(helper, ew):
             events_data = data['commits'][:new_rows]
             helper.save_check_point(offset_ckpt_str, 0)
         else:  # We need to catch up on the next run
+            helper.log_info("Unable to get all new data, next run will start at offset {}".format(limit))
             events_data = data['commits']
             helper.save_check_point(offset_ckpt_str, limit)
             helper.save_check_point(stop_offset_ckpt_str, new_rows)
@@ -108,6 +110,7 @@ def collect_events(helper, ew):
             helper.save_check_point(offset_ckpt_str, offset + new_rows)
             helper.save_check_point(stop_offset_ckpt_str, new_rows)
         elif rows_to_get > limit:  # We need to keep catching up on next run
+            helper.log_info("Still catching up, next run will start at offset {}".format(offset_ckpt + limit))
             events_data = data['commits'][new_rows:]
             helper.save_check_point(offset_ckpt_str, offset_ckpt + limit)
             helper.save_check_point(stop_offset_ckpt_str, stop_offset_ckpt + new_rows)
